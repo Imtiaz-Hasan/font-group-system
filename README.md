@@ -139,7 +139,6 @@ cd frontend
 npm run build
 
 # The built files will be served by Laravel
-# Access the application at your Laravel URL
 ```
 
 ## 📁 Project Structure
@@ -228,85 +227,4 @@ php artisan test
 cd frontend
 npm test
 ```
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Font preview not working**
-   - Ensure storage link is created: `php artisan storage:link`
-   - Check file permissions on storage directory
-   - Verify font files are accessible via `/storage/` URL
-   - Check browser console for font loading errors
-
-2. **API connection issues**
-   - Check CORS configuration in `config/cors.php`
-   - Verify Laravel server is running on correct port (8000)
-   - Check browser console for network errors
-   - Ensure proxy is configured in `frontend/package.json`
-
-3. **Database connection issues**
-   - Verify database configuration in `.env` file
-   - Ensure MySQL server is running
-   - Run migrations: `php artisan migrate`
-   - Check database credentials and permissions
-
-4. **Font upload validation errors**
-   - Ensure file is TTF format
-   - Check file size (max 10MB)
-   - Verify font name is unique
-   - Check Laravel logs in `storage/logs/`
-
-5. **Frontend build issues**
-   - Clear node_modules and reinstall: `rm -rf node_modules && npm install`
-   - Check Node.js version compatibility (16+)
-   - Verify all dependencies are installed
-   - Clear npm cache: `npm cache clean --force`
-
-6. **Configuration errors**
-   - Clear Laravel config cache: `php artisan config:clear`
-   - Restart both Laravel and React servers
-   - Check for missing config files in `config/` directory
-
-## 📝 Development Guidelines
-
-### Code Style
-- Follow PSR-12 for PHP code
-- Use ESLint for JavaScript/React code
-- Maintain consistent naming conventions
-
-### Architecture Principles
-- Follow SOLID principles
-- Use dependency injection
-- Implement proper error handling
-- Write clean, readable code
-
-### Git Workflow
-- Use descriptive commit messages
-- Create feature branches for new functionality
-- Test thoroughly before merging
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is open-sourced software licensed under the [MIT license](LICENSE).
-
-## 🆘 Support
-
-For issues and questions:
-1. Check the troubleshooting section
-2. Review the API documentation
-3. Check browser console for errors
-4. Review Laravel logs in `storage/logs/`
-5. Check network tab for API request/response issues
-
----
-
 **Built with ❤️ using Laravel and React** 
