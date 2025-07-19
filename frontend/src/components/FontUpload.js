@@ -52,7 +52,27 @@ const FontUpload = ({ onFontUpload }) => {
       }
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Error uploading font. Please try again.');
+      
+      // Handle backend validation errors
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        
+        if (errorData.message) {
+          alert(errorData.message);
+        } else if (errorData.errors) {
+          // Show first error message
+          const firstError = Object.values(errorData.errors)[0];
+          if (Array.isArray(firstError) && firstError.length > 0) {
+            alert(firstError[0]);
+          } else {
+            alert('Upload failed. Please check your file and try again.');
+          }
+        } else {
+          alert('Error uploading font. Please try again.');
+        }
+      } else {
+        alert('Error uploading font. Please try again.');
+      }
     } finally {
       setUploading(false);
     }

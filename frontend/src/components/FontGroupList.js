@@ -9,13 +9,18 @@ const FontGroupList = ({ fontGroups, fonts, onFontGroupUpdate, onFontGroupDelete
   const handleEdit = (group) => {
     setEditingGroup({
       ...group,
-      fonts: group.fonts.split(', ').map(fontName => {
-        const font = fonts.find(f => f.name === fontName);
-        return {
-          font_id: font ? font.id : null,
-          font_name: fontName
-        };
-      })
+      fonts: Array.isArray(group.fonts) 
+        ? group.fonts.map(font => ({
+            font_id: font.id || font.font_id,
+            font_name: font.name || font.font_name
+          }))
+        : group.fonts.split(', ').map(fontName => {
+            const font = fonts.find(f => f.name === fontName);
+            return {
+              font_id: font ? font.id : null,
+              font_name: fontName
+            };
+          })
     });
   };
 
@@ -47,7 +52,7 @@ const FontGroupList = ({ fontGroups, fonts, onFontGroupUpdate, onFontGroupDelete
       return;
     }
 
-    const selectedFonts = editingGroup.fonts.filter(font => font.font_id);
+    const selectedFonts = editingGroup.fonts.filter(font => font.font_id && font.font_name);
     if (selectedFonts.length < 2) {
       alert('Please select at least two fonts.');
       return;
@@ -184,10 +189,18 @@ const FontGroupList = ({ fontGroups, fonts, onFontGroupUpdate, onFontGroupDelete
                 <div className="space-y-2">
                   {editingGroup.fonts.map((font, index) => (
                     <div key={index} className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        placeholder="Font Name"
+                        value={font.font_name || ''}
+                        onChange={(e) => updateEditingGroupFont(index, 'font_name', e.target.value)}
+                        disabled
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 cursor-not-allowed"
+                      />
                       <select
                         value={font.font_id || ''}
                         onChange={(e) => {
-                          const selectedFont = fonts.find(f => f.id === e.target.value);
+                          const selectedFont = fonts.find(f => f.id === parseInt(e.target.value, 10));
                           updateEditingGroupFont(index, 'font_id', e.target.value);
                           updateEditingGroupFont(index, 'font_name', selectedFont ? selectedFont.name : '');
                         }}

@@ -121,7 +121,8 @@ const FontGroupCreator = ({ fonts, onFontGroupCreate }) => {
               placeholder="Font Name"
               value={row.fontName}
               onChange={(e) => updateRow(row.id, 'fontName', e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 cursor-not-allowed"
             />
 
             {/* Font Selection Dropdown */}

@@ -14,13 +14,17 @@ class FontGroupService
         
         return $fontGroups->map(function ($fontGroup) {
             $fonts = $fontGroup->fontGroupItems->map(function ($item) {
-                return $item->font->name;
+                return [
+                    'id' => $item->font->id,
+                    'name' => $item->font->name,
+                    'font_id' => $item->font_id
+                ];
             })->toArray();
             
             return [
                 'id' => $fontGroup->id,
                 'name' => $fontGroup->name,
-                'fonts' => implode(', ', $fonts),
+                'fonts' => $fonts,
                 'count' => count($fonts),
                 'created_at' => $fontGroup->created_at
             ];
@@ -60,7 +64,23 @@ class FontGroupService
                 ]);
             }
 
-            return $this->getFontGroup($fontGroup->id);
+            // Return complete font group data with count
+            $fontGroup = FontGroup::with('fontGroupItems.font')->find($fontGroup->id);
+            $fonts = $fontGroup->fontGroupItems->map(function ($item) {
+                return [
+                    'id' => $item->font->id,
+                    'name' => $item->font->name,
+                    'font_id' => $item->font_id
+                ];
+            })->toArray();
+            
+            return [
+                'id' => $fontGroup->id,
+                'name' => $fontGroup->name,
+                'fonts' => $fonts,
+                'count' => count($fonts),
+                'created_at' => $fontGroup->created_at
+            ];
         });
     }
 
@@ -81,7 +101,23 @@ class FontGroupService
                 ]);
             }
 
-            return $this->getFontGroup($fontGroup->id);
+            // Return complete font group data with count
+            $fontGroup = FontGroup::with('fontGroupItems.font')->find($id);
+            $fonts = $fontGroup->fontGroupItems->map(function ($item) {
+                return [
+                    'id' => $item->font->id,
+                    'name' => $item->font->name,
+                    'font_id' => $item->font_id
+                ];
+            })->toArray();
+            
+            return [
+                'id' => $fontGroup->id,
+                'name' => $fontGroup->name,
+                'fonts' => $fonts,
+                'count' => count($fonts),
+                'created_at' => $fontGroup->created_at
+            ];
         });
     }
 

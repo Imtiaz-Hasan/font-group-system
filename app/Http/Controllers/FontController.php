@@ -56,6 +56,20 @@ class FontController extends Controller
             ], 422);
         }
 
+        // Check for duplicate font name
+        $fontName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $existingFont = Font::where('name', $fontName)->first();
+        
+        if ($existingFont) {
+            return response()->json([
+                'success' => false,
+                'message' => 'A font with this name already exists.',
+                'errors' => [
+                    'font_file' => ['A font with this name already exists.']
+                ]
+            ], 422);
+        }
+
         try {
             $font = $this->fontService->uploadFont($request->file('font_file'));
             return response()->json([

@@ -9,6 +9,7 @@ A modern web application for managing font groups with drag-and-drop upload func
 - **Font preview**: See uploaded fonts rendered as "Example Style" text
 - **Font deletion**: Remove individual fonts from the system
 - **File validation**: Ensures only TTF files are accepted
+- **Duplicate prevention**: Prevents uploading fonts with the same name
 
 ### Font Group Management
 - **Dynamic group creation**: Add multiple fonts to groups with validation
@@ -44,7 +45,7 @@ A modern web application for managing font groups with drag-and-drop upload func
 - PHP 8.1+
 - Composer
 - Node.js 16+
-- MySQL/PostgreSQL/SQLite
+- MySQL 5.7+ (recommended) or PostgreSQL/SQLite
 - Web server (Apache/Nginx) or Laravel's built-in server
 
 ## 🚀 Quick Setup
@@ -85,11 +86,17 @@ php artisan key:generate
 # DB_USERNAME=your_username
 # DB_PASSWORD=your_password
 
+# Create MySQL database
+mysql -u your_username -p -e "CREATE DATABASE font_group_system;"
+
 # Run database migrations
 php artisan migrate
 
 # Create storage link for font files
 php artisan storage:link
+
+# Clear config cache
+php artisan config:clear
 ```
 
 #### Frontend Setup
@@ -100,8 +107,8 @@ cd frontend
 # Install Node.js dependencies
 npm install
 
-# Build the application
-npm run build
+# Start development server
+npm start
 ```
 
 ## 🏃‍♂️ Running the Application
@@ -123,6 +130,8 @@ npm start
 ```
 The application will be available at `http://localhost:3000`
 
+**Note**: The frontend is configured with a proxy to `http://localhost:8000` for API calls.
+
 ### Production Mode
 ```bash
 # Build the frontend for production
@@ -140,22 +149,27 @@ font-group-system/
 ├── app/
 │   ├── Http/Controllers/     # API Controllers
 │   ├── Models/              # Eloquent Models
-│   └── Services/            # Business Logic Layer
+│   ├── Services/            # Business Logic Layer
+│   └── Console/Commands/    # Artisan Commands
+├── config/                  # Laravel Configuration
 ├── database/migrations/     # Database Schema
 ├── frontend/
 │   ├── src/
 │   │   ├── components/      # React Components
-│   │   └── services/        # API Services
+│   │   ├── services/        # API Services
+│   │   └── index.js         # React Entry Point
 │   └── public/             # Static Assets
 ├── routes/api.php          # API Routes
-└── storage/app/public/     # Font File Storage
+├── storage/app/public/     # Font File Storage
+├── setup.bat              # Windows Setup Script
+└── setup.sh               # Linux/Mac Setup Script
 ```
 
 ## 🔧 API Endpoints
 
 ### Font Management
 - `GET /api/fonts` - Get all fonts
-- `POST /api/fonts` - Upload a new font
+- `POST /api/fonts` - Upload a new font (TTF only, max 10MB)
 - `DELETE /api/fonts/{id}` - Delete a font
 
 ### Font Group Management
@@ -169,19 +183,19 @@ font-group-system/
 
 ### FontUpload
 - Drag and drop interface for TTF files
-- File type validation
+- File type validation with error messages
 - Upload progress indication
-- Error handling and user feedback
+- Error handling and user feedback popups
 
 ### FontList
 - Table display of uploaded fonts
-- Font preview using loaded fonts
+- Font preview using FontFace API
 - Delete functionality with confirmation
 - Loading states for font rendering
 
 ### FontGroupCreator
 - Dynamic row addition for multiple fonts
-- Font selection dropdown
+- Font selection dropdown with auto-population
 - Validation for minimum 2 fonts
 - Group name input with validation
 
@@ -189,12 +203,13 @@ font-group-system/
 - Table display of all font groups
 - Edit modal with font selection
 - Delete functionality with confirmation
-- Font count display
+- Font count display with real-time updates
 
 ## 🔒 Security Features
 
 - **File Validation**: Only TTF files accepted
 - **File Size Limits**: 10MB maximum file size
+- **Duplicate Prevention**: Prevents uploading fonts with same name
 - **CORS Configuration**: Proper cross-origin settings
 - **Input Validation**: Comprehensive server-side validation
 - **Error Handling**: Secure error messages without exposing internals
@@ -222,21 +237,36 @@ npm test
    - Ensure storage link is created: `php artisan storage:link`
    - Check file permissions on storage directory
    - Verify font files are accessible via `/storage/` URL
+   - Check browser console for font loading errors
 
 2. **API connection issues**
    - Check CORS configuration in `config/cors.php`
-   - Verify Laravel server is running on correct port
+   - Verify Laravel server is running on correct port (8000)
    - Check browser console for network errors
+   - Ensure proxy is configured in `frontend/package.json`
 
 3. **Database connection issues**
    - Verify database configuration in `.env` file
-   - Ensure database server is running
+   - Ensure MySQL server is running
    - Run migrations: `php artisan migrate`
+   - Check database credentials and permissions
 
-4. **Frontend build issues**
+4. **Font upload validation errors**
+   - Ensure file is TTF format
+   - Check file size (max 10MB)
+   - Verify font name is unique
+   - Check Laravel logs in `storage/logs/`
+
+5. **Frontend build issues**
    - Clear node_modules and reinstall: `rm -rf node_modules && npm install`
-   - Check Node.js version compatibility
+   - Check Node.js version compatibility (16+)
    - Verify all dependencies are installed
+   - Clear npm cache: `npm cache clean --force`
+
+6. **Configuration errors**
+   - Clear Laravel config cache: `php artisan config:clear`
+   - Restart both Laravel and React servers
+   - Check for missing config files in `config/` directory
 
 ## 📝 Development Guidelines
 
@@ -275,6 +305,7 @@ For issues and questions:
 2. Review the API documentation
 3. Check browser console for errors
 4. Review Laravel logs in `storage/logs/`
+5. Check network tab for API request/response issues
 
 ---
 
